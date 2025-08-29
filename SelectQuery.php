@@ -1,22 +1,28 @@
 <?php
-// select * from tabela where condicao order by colunaPrincipal, limit NumLimit
-// select [*]from(name,?alias)  where(numCond,condição,?operador)
-// order by(colunaPrincipal, ordemDeOrdenação) limit(valor)
-// where cond1 or cond2 
-// from batata as b -> assim é o alias
+
 class SelectQuery
 {
+    public array $queries = [
+    'select' => '',
+    'from'   => '',
+    'where'  => '',
+    'order'  => '',
+    'limit'  => '',
+];
 
     public function select(array $columns)
     {
-        return 'SELECT ' . implode(",", $columns) . " ";
+        $this->queries["select"] = 'SELECT ' . implode(",", $columns) . " ";
+        return $this;
     }
     public function from(string $table, ?string $alias = null)
     {
         if (isset($alias)) {
-            return ' FROM ' . $table . ' as ' . $alias . " ";
+            $this->queries["from"] = ' FROM ' . $table . ' as ' . $alias . " ";
+            return $this;
         }
-        return $table;
+        $this->queries["from"] = ' FROM ' . $table . " ";
+        return $this;
     }
     public function where(int $NumberCondiction, array $condiction, ?array $operator = null)
     {
@@ -30,15 +36,39 @@ class SelectQuery
                     $formatedWhere[] = $condiction[$i];
                 }
             }
-            print_r('WHERE ' . implode(" ", $formatedWhere));
-            return 'WHERE ' . implode(" ", $formatedWhere);
+            $this->queries["where"] =  'WHERE ' . implode(" ", $formatedWhere) . " ";
+            return $this;
         }
-        print_r("WHERE " . implode(" ", $condiction));
+        $this->queries["where"] = 'WHERE ' . implode(" ", $condiction);
+        return $this;
+    }
+    public function order(int $NumbeOrder, array $columnName, ?array $order = NULL)
+    {
+        $formatedWhere = [];
+        $formatedWhere[] = $columnName[0];
+        if ($NumbeOrder != 1 and count($columnName) == $NumbeOrder and count($order) == $NumbeOrder - 1) {
+
+            for ($i = 1; $i < count($columnName); $i++) {
+                if ($i < count($columnName)) {
+                    $formatedWhere[] = $order[($i - 1) % count($order)];
+                    $formatedWhere[] = $columnName[$i];
+                }
+            }
+            $this->queries["order"] = 'ORDER BY ' . implode($formatedWhere) . " ";
+            return $this;
+        }
+        $this->queries["order"] = 'ORDER BY ' . implode(" ",$columnName) . " ";
+        return $this;
+    }
+    public function limit($limitNumber)
+    {
+        $this->queries["limit"] = 'LIMIT ' . $limitNumber . " ";
+        return $this;
+    }
+    public function toSql()
+    {
+        $sqlQuery = $this->queries['select'] . " " . $this->queries['from'] . $this->queries['where']
+            . $this->queries['order'] . " " . $this->queries['limit'];
+        return trim($sqlQuery).";";
     }
 }
-
-$arrayImag = ['p.id', 'p.name'];
-$a = new SelectQuery();
-$a->select($arrayImag);
-$a->where(2, ['category = "eletronico"', 'category = "eletredomestico"'], ['OR']);
-// print_r($a->from('pedido', 'p'));
