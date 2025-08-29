@@ -1,3 +1,48 @@
 <?php
 
-class Query {}
+class Query {
+    // limit; where; generic; from 
+        public array $queries = [
+        'select' => '',
+        'from'   => '',
+        'where'  => '',
+        'order'  => '',
+        'limit'  => '',
+    ];
+
+
+        public function from(string $table, ?string $alias = null)
+    {
+        if (isset($alias)) {
+            $this->queries["from"] = ' FROM ' . $table . ' as ' . $alias . " ";
+            return $this;
+        }
+        $this->queries["from"] = ' FROM ' . $table . " ";
+        return $this;
+    }
+        protected function genericOrdemClause(int $Quantity, array $fieldExpression, ?array $modifiers = NULL)
+    {
+        $formated = [];
+        $formated[] = $fieldExpression[0];
+        if ($Quantity != 1 and count($fieldExpression) == $Quantity and count($modifiers) == $Quantity - 1) {
+
+            for ($i = 1; $i < count($fieldExpression); $i++) {
+                if ($i < count($fieldExpression)) {
+                    $formated[] = $modifiers[($i - 1) % count($modifiers)];
+                    $formated[] = $fieldExpression[$i];
+                }
+            }
+        }
+        return $formated;
+    }
+        public function where(?int $NumberCondiction = null, array $condiction, ?array $operator = null)
+    {
+        $formatedWhere = $this->genericOrdemClause($NumberCondiction, $condiction, $operator);
+        if ($NumberCondiction != 1 and count($condiction) == $NumberCondiction and count($operator) == $NumberCondiction - 1) {
+            $this->queries["where"] =  'WHERE ' . implode(" ", $formatedWhere) . " ";
+            return $this;
+        }
+        $this->queries["where"] = 'WHERE ' . implode(" ", $condiction);
+        return $this;
+    }
+}
