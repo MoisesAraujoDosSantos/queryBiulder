@@ -20,3 +20,4 @@ class InsertQuery extends Query
         return $this;
     }
 }
+
