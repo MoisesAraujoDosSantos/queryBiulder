@@ -1,0 +1,16 @@
+{
+    "name": "ipeweb/query-biulder",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Ipeweb\\QueryBiulder\\": "queryBiulder/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Moises Araujo dos Santos",
+            "email": "moisesaraujodossantos10@gmail.com"
+        }
+    ],
+    "require": {}
+}
