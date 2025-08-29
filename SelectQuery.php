@@ -14,32 +14,31 @@ class SelectQuery
     public function from(string $table, ?string $alias = null)
     {
         if (isset($alias)) {
-            return ' FROM '. $table . ' as ' . $alias . " ";
+            return ' FROM ' . $table . ' as ' . $alias . " ";
         }
         return $table;
     }
-    public function where(int $NumberCondiction,array $condiction,?array $operator = null)
+    public function where(int $NumberCondiction, array $condiction, ?array $operator = null)
     {
-        $ar = ['category = "eletronico"','category = "eletredomestico"'];
-        $operator = ["OR"];
-        $result = '';
-        if ($NumberCondiction != 1 AND count($ar) == $NumberCondiction AND count($operator) == $NumberCondiction -1) {
-            //verificar isso aqui
-            for ($i = 0; $i < count($ar); $i++) {
-                $result .= $ar[$i];
-                if($i < count($ar) - 1 AND $i > 0) {
-                echo $ar[$i] . PHP_EOL;
-                $result .= " " . $operator[($i - 1) % count($operator)] . " ";
+        $formatedWhere = [];
+        $formatedWhere[] = $condiction[0];
+        if ($NumberCondiction != 1 and count($condiction) == $NumberCondiction and count($operator) == $NumberCondiction - 1) {
+
+            for ($i = 1; $i < count($condiction); $i++) {
+                if ($i < count($condiction)) {
+                    $formatedWhere[] = $operator[($i - 1) % count($operator)];
+                    $formatedWhere[] = $condiction[$i];
+                }
             }
-            echo $result;
-          }
-        print_r($ar);
-        
+            print_r('WHERE ' . implode(" ", $formatedWhere));
+            return 'WHERE ' . implode(" ", $formatedWhere);
+        }
+        print_r("WHERE " . implode(" ", $condiction));
     }
 }
-}
+
 $arrayImag = ['p.id', 'p.name'];
 $a = new SelectQuery();
 $a->select($arrayImag);
-$a->where(2,['category = "eletronico"','category = "eletredomestico"'],['OR', 'AND']);
+$a->where(2, ['category = "eletronico"', 'category = "eletredomestico"'], ['OR']);
 // print_r($a->from('pedido', 'p'));
