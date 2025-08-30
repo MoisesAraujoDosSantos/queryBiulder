@@ -10,18 +10,27 @@ class Query {
         'order'  => '',
         'limit'  => '',
     ];
-
+        public array $bindings = [
+        'select' => [],
+        'from'   => [],
+        'where'  => [],
+        'order'  => [],
+        'limit'  => [],
+        ];
 
         public function from(string $table, ?string $alias = null)
     {
-        if (isset($alias)) {
+        $this->validateIdentifier($table);
+        $this->validateIdentifier($alias);
+        if ($alias !== null) {
             $this->queries["from"] = ' FROM ' . $table . ' as ' . $alias . " ";
             return $this;
         }
         $this->queries["from"] = ' FROM ' . $table . " ";
         return $this;
     }
-        protected function genericOrdemClause( array $fieldExpression,?int $Quantity = null, ?array $modifiers = NULL)
+
+    protected function genericOrdemClause( array $fieldExpression,?int $Quantity = null, ?array $modifiers = NULL)
     {
         $formated = [];
         $formated[] = $fieldExpression[0];
@@ -38,14 +47,45 @@ class Query {
     }
         public function where(array $condiction, ?int $NumberCondiction = null, ?array $operator = null)
     {
-        $formatedWhere = $this->genericOrdemClause( $condiction,$NumberCondiction, $operator);
+        $tratament = $this->genericOrdemClause( $condiction,$NumberCondiction, $operator);
+        $formatedWhere = [];
         if ($NumberCondiction != 1 and count($condiction) == $NumberCondiction and count($operator) == $NumberCondiction - 1) {
+            $formatedWhere = $this->placeHolder($condiction,"where"); 
+            
             $this->queries["where"] =  'WHERE ' . implode(" ", $formatedWhere) . " ";
             return $this;
         }
-        $this->queries["where"] = 'WHERE ' . implode(" ", $condiction);
+        $this->queries["where"] = 'WHERE ' . implode(" ", $this->placeHolder($condiction,"where")) . " ";
         return $this;
     }
+
+    public function placeHolder(array|string $textValue, string $clauseName)
+    {   $formatedQuery = [];
+        if(is_array($textValue)) {
+            for ($i = 0; $i < count($textValue); $i++) {
+                [$field,$value] = explode('=',$textValue[$i],2);
+                $field = trim($field);
+                $value = trim($value);
+                $this->bindings[$clauseName][] = $value;
+                $formatedQuery[] = $field.' = :'.$field;
+            }
+            return $formatedQuery;
+        }
+        [$field,$value] = explode('=',$textValue,2);
+        $field = trim($field);
+        $value = trim($value);
+        $this->bindings[$clauseName][] = $value;
+        $formatedQuery[] = $field.' = :'.$field;
+        return $formatedQuery;
+    }
+
+    protected function validateIdentifier(string $name){
+        if(!preg_match('/^[a-zA-Z0-9_]*$/', $name)) {
+            throw new \InvalidArgumentException("Invalid identifier: $name");
+        }
+        return $name;
+    }
+
     public function querieReset()
     {
         $this->queries = [
