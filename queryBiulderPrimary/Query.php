@@ -131,12 +131,8 @@ class Query {
     { 
         $sqlQuery = $this->toSql();
         $bindings = $this->bindings;
-        $stmt = $this->prepare($sqlQuery);
-        foreach ($bindings as $clauseValues) {
-            foreach ($clauseValues as $placeholder => $value) {
-                $stmt->bindValue(':'.$placeholder, $value);
-            }
-        }
+        $stmt = $this->prepare($sqlQuery,$bindings);
+
         $this->bindReset();
         $stmt->execute();
         return $stmt;
