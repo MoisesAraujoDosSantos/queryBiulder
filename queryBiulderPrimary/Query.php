@@ -62,22 +62,32 @@ class Query {
     }
 
     public function placeHolder(array|string $textValue, string $clauseName)
-    {   $formatedQuery = [];
-        if(is_array($textValue)) {
-            for ($i = 0; $i < count($textValue); $i++) {
-                [$field,$value] = explode('=',$textValue[$i],2);
-                $field = trim($field);
-                $value = trim($value);
-                $this->bindings[$clauseName][$field] = $value;
-                $formatedQuery[] = $field.' = :'.$field;
+    {
+        $formatedQuery = [];
+        if (is_array($textValue)) {
+            foreach ($textValue as $item) {
+                if (strpos($item, '=') !== false) {
+                    [$field, $value] = explode('=', $item, 2);
+                    $field = trim($field);
+                    $value = trim($value);
+                    $this->bindings[$clauseName][$field] = $value;
+                    $formatedQuery[] = $field . ' = :' . $field;
+                } else {
+                    // Para inserts, só retorna o nome do campo
+                    $formatedQuery[] = trim($item);
+                }
             }
             return $formatedQuery;
         }
-        [$field,$value] = explode('=',$textValue,2);
-        $field = trim($field);
-        $value = trim($value);
-        $this->bindings[$clauseName][$field] = $value;
-        $formatedQuery[] = $field.' = :'.$field;
+        if (strpos($textValue, '=') !== false) {
+            [$field, $value] = explode('=', $textValue, 2);
+            $field = trim($field);
+            $value = trim($value);
+            $this->bindings[$clauseName][$field] = $value;
+            $formatedQuery[] = $field . ' = :' . $field;
+        } else {
+            $formatedQuery[] = trim($textValue);
+        }
         return $formatedQuery;
     }
 
