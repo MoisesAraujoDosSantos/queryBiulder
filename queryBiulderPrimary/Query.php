@@ -21,7 +21,9 @@ class Query {
         public function from(string $table, ?string $alias = null)
     {
         $this->validateIdentifier($table);
-        $this->validateIdentifier($alias);
+        if($alias !== null) {
+            $this->validateIdentifier($alias);
+        }
         if ($alias !== null) {
             $this->queries["from"] = ' FROM ' . $table . ' as ' . $alias . " ";
             return $this;
