@@ -66,7 +66,7 @@ class Query {
                 [$field,$value] = explode('=',$textValue[$i],2);
                 $field = trim($field);
                 $value = trim($value);
-                $this->bindings[$clauseName][] = $value;
+                $this->bindings[$clauseName][$field] = $value;
                 $formatedQuery[] = $field.' = :'.$field;
             }
             return $formatedQuery;
@@ -74,7 +74,7 @@ class Query {
         [$field,$value] = explode('=',$textValue,2);
         $field = trim($field);
         $value = trim($value);
-        $this->bindings[$clauseName][] = $value;
+        $this->bindings[$clauseName][$field] = $value;
         $formatedQuery[] = $field.' = :'.$field;
         return $formatedQuery;
     }
