@@ -105,4 +105,29 @@ class Query {
         'limit'  => '',
     ];
     }
+    public function prepare(\PDO $pdo, string $sqlQuery, array $bindings)
+    {
+        $stmt = $pdo->prepare($sqlQuery);
+        foreach ($bindings as $clauseValues) {
+            foreach ($clauseValues as $placeholder => $value) {
+                $stmt->bindValue(':'.$placeholder, $value);
+            }
+        }
+        return $stmt;
+    }
+    public function execute(\PDO $pdo)
+    { 
+        $sqlQuery = $this->toSql();
+        $bindings = $this->bindings;
+        $stmt = $this->prepare($sqlQuery);
+        foreach ($bindings as $clauseValues) {
+            foreach ($clauseValues as $placeholder => $value) {
+                $stmt->bindValue(':'.$placeholder, $value);
+            }
+        }
+        $stmt->execute();
+        $this->querieReset();
+        return $stmt;
+    }
+
 }
