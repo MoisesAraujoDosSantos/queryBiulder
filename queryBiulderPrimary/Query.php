@@ -105,6 +105,18 @@ class Query {
         'limit'  => '',
     ];
     }
+
+    public function bindReset()
+    {
+        $this->bindings = [
+            'select' => [],
+            'from'   => [],
+            'where'  => [],
+            'order'  => [],
+            'limit'  => [],
+        ];
+    }
+
     public function prepare(\PDO $pdo, string $sqlQuery, array $bindings)
     {
         $stmt = $pdo->prepare($sqlQuery);
@@ -125,8 +137,8 @@ class Query {
                 $stmt->bindValue(':'.$placeholder, $value);
             }
         }
+        $this->bindReset();
         $stmt->execute();
-        $this->querieReset();
         return $stmt;
     }
 
