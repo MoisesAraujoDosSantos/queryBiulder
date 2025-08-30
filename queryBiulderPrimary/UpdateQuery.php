@@ -27,7 +27,7 @@ public function set(array $columns, array $values)
     {
         $sqlQuery = $this->queries['update']. $this->queries['set'];
          if(!empty($this->queries['where'])){
-        $sqlQuery .= $this->queries['update']. $this->queries['set'] ;
+        $sqlQuery .= ' ' . $this->queries['where'];
          } 
         $this->querieReset();
         return $sqlQuery. ";";
