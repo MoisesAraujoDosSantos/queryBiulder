@@ -79,10 +79,19 @@ class Query {
         return $formatedQuery;
     }
 
-    protected function validateIdentifier(string $name){
-        if(!preg_match('/^[a-zA-Z0-9_]*$/', $name)) {
-            throw new \InvalidArgumentException("Invalid identifier: $name");
+    protected function validateIdentifier(string|array $name){
+        if(is_array($name)) {
+            foreach ($name as $item) {
+                if(!preg_match('/^[a-zA-Z0-9_]*$/', $item)) {
+                    throw new \InvalidArgumentException("Invalid identifier: $item");
+                }
+            }
+        return $name;
         }
+        if(!preg_match('/^[a-zA-Z0-9_]*$/', $name)) {
+                throw new \InvalidArgumentException("Invalid identifier: $name");
+        }
+        
         return $name;
     }
 
