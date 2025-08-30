@@ -8,6 +8,7 @@ class DeleteQuery extends Query{
 
     public function delete($tableName,$condition)
     {
+       $this->validateIdentifier($tableName);
        $this->queries['delete'] = 'DELETE';
        $this->from($tableName)->where($condition,null); 
        return $this;
