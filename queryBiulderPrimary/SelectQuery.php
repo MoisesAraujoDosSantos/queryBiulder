@@ -19,7 +19,7 @@ class SelectQuery extends Query
     public function where(array $condiction,?int $NumberCondiction = null, ?array $operator = null)
     {
         if ($NumberCondiction == null) {
-            throw new \Exception('Tem que indicar o numero de condições!!');
+            throw new \Exception('You must specify the number of conditions!');
         }
         return parent::where($condiction,$NumberCondiction,  $operator);
     }

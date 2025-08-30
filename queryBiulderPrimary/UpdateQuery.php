@@ -13,7 +13,7 @@ class UpdateQuery extends Query{
     public function set(array $columns, array $values)
     {
         if (count($columns) != count($values)) {
-            throw new \Exception('colunas e valores devem ter o mesmo tamanho');
+            throw new \Exception('Columns and values must have the same length');
         }
         $querie = [];
         for ($i = 0; $i < count($columns); $i++) {

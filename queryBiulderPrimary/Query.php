@@ -98,12 +98,11 @@ class Query {
                     throw new \InvalidArgumentException("Invalid identifier: $item");
                 }
             }
-        return $name;
+            return $name;
         }
         if(!preg_match('/^[a-zA-Z0-9_]*$/', $name)) {
-                throw new \InvalidArgumentException("Invalid identifier: $name");
+            throw new \InvalidArgumentException("Invalid identifier: $name");
         }
-        
         return $name;
     }
 
