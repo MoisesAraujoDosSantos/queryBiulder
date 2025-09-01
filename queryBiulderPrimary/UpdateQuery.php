@@ -7,6 +7,9 @@ class UpdateQuery extends Query{
     public function update($tableName, $condition)
     {
         $this->validateIdentifier($tableName);
+        if (!is_array($condition) || empty($condition)) {
+            throw new \InvalidArgumentException('Update sem condição não é permitido. Passe um array de condição.');
+        }
         $this->queries['update'] = 'UPDATE ' . $tableName;
         $this->requiremnt = $condition;
         return $this;
@@ -34,8 +37,8 @@ class UpdateQuery extends Query{
         if (!empty($this->queries['where'])) {
             $sqlQuery .= ' ' . $this->queries['where'];
         }
-        $this->querieReset();
-        return $sqlQuery . ";";
+        // $this->querieReset();
+        return trim($sqlQuery) . ";";
     }
 
 

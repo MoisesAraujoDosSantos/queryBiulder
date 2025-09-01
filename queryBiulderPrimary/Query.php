@@ -1,27 +1,29 @@
 <?php
+
 namespace Ipeweb\QueryBiulder;
 
-class Query {
+class Query
+{
 
-        public array $queries = [
+    public array $queries = [
         'select' => '',
         'from'   => '',
         'where'  => '',
         'order'  => '',
         'limit'  => '',
     ];
-        public array $bindings = [
+    public array $bindings = [
         'select' => [],
         'from'   => [],
         'where'  => [],
         'order'  => [],
         'limit'  => [],
-        ];
+    ];
 
-        public function from(string $table, ?string $alias = null)
+    public function from(string $table, ?string $alias = null)
     {
         $this->validateIdentifier($table);
-        if($alias !== null) {
+        if ($alias !== null) {
             $this->validateIdentifier($alias);
         }
         if ($alias !== null) {
@@ -32,7 +34,7 @@ class Query {
         return $this;
     }
 
-    protected function genericOrdemClause( array $fieldExpression,?int $Quantity = null, ?array $modifiers = NULL)
+    protected function genericOrdemClause(array $fieldExpression, ?int $Quantity = null, ?array $modifiers = NULL)
     {
         $formated = [];
         $formated[] = $fieldExpression[0];
@@ -47,17 +49,17 @@ class Query {
         }
         return $formated;
     }
-        public function where(array $condiction, ?int $NumberCondiction = null, ?array $operator = null)
+    public function where(array $condiction, ?int $NumberCondiction = null, ?array $operator = null)
     {
-        $tratament = $this->genericOrdemClause( $condiction,$NumberCondiction, $operator);
+        $tratament = $this->genericOrdemClause($condiction, $NumberCondiction, $operator);
         $formatedWhere = [];
         if ($NumberCondiction != 1 and count($condiction) == $NumberCondiction and count($operator) == $NumberCondiction - 1) {
-            $formatedWhere = $this->placeHolder($condiction,"where"); 
-            
+            $formatedWhere = $this->placeHolder($condiction, "where");
+
             $this->queries["where"] =  'WHERE ' . implode(" ", $formatedWhere) . " ";
             return $this;
         }
-        $this->queries["where"] = 'WHERE ' . implode(" ", $this->placeHolder($condiction,"where")) . " ";
+        $this->queries["where"] = 'WHERE ' . implode(" ", $this->placeHolder($condiction, "where")) . " ";
         return $this;
     }
 
@@ -91,16 +93,17 @@ class Query {
         return $formatedQuery;
     }
 
-    protected function validateIdentifier(string|array $name){
-        if(is_array($name)) {
+    protected function validateIdentifier(string|array $name)
+    {
+        if (is_array($name)) {
             foreach ($name as $item) {
-                if(!preg_match('/^[a-zA-Z0-9_]*$/', $item)) {
+                if (!preg_match('/^[a-zA-Z0-9_]*$/', $item)) {
                     throw new \InvalidArgumentException("Invalid identifier: $item");
                 }
             }
             return $name;
         }
-        if(!preg_match('/^[a-zA-Z0-9_]*$/', $name)) {
+        if (!preg_match('/^[a-zA-Z0-9_]*$/', $name)) {
             throw new \InvalidArgumentException("Invalid identifier: $name");
         }
         return $name;
@@ -109,12 +112,12 @@ class Query {
     public function querieReset()
     {
         $this->queries = [
-        'select' => '',
-        'from'   => '',
-        'where'  => '',
-        'order'  => '',
-        'limit'  => '',
-    ];
+            'select' => '',
+            'from'   => '',
+            'where'  => '',
+            'order'  => '',
+            'limit'  => '',
+        ];
     }
 
     public function bindReset()
@@ -128,25 +131,31 @@ class Query {
         ];
     }
 
+    public function toSql()
+    {
+        return '';
+    }
+
     public function prepare(\PDO $pdo, string $sqlQuery, array $bindings)
     {
         $stmt = $pdo->prepare($sqlQuery);
         foreach ($bindings as $clauseValues) {
             foreach ($clauseValues as $placeholder => $value) {
-                $stmt->bindValue(':'.$placeholder, $value);
+                $stmt->bindValue(':' . $placeholder, $value);
             }
         }
         return $stmt;
     }
     public function execute(\PDO $pdo)
-    { 
+    {
         $sqlQuery = $this->toSql();
         $bindings = $this->bindings;
-        $stmt = $this->prepare($sqlQuery,$bindings);
+        $stmt = $this->prepare($pdo, $sqlQuery, $bindings);
 
         $this->bindReset();
         $stmt->execute();
+        echo $stmt->rowCount() . " linha(s) atualizada(s)";
+
         return $stmt;
     }
-
 }
