@@ -3,10 +3,12 @@ namespace Ipeweb\QueryBiulder;
 
 
 class UpdateQuery extends Query{
+    public ?array $requiremnt;
     public function update($tableName, $condition)
     {
         $this->validateIdentifier($tableName);
         $this->queries['update'] = 'UPDATE ' . $tableName;
+        $this->requiremnt = $condition;
         return $this;
     }
 
@@ -21,6 +23,8 @@ class UpdateQuery extends Query{
         }
         $querieFormat = $this->placeHolder($querie, "set");
         $this->queries['set'] = ' SET ' . implode(', ', $querieFormat);
+        $this->where($this->requiremnt,null);
+        $this->requiremnt = null;
         return $this;
     }
 
