@@ -2,6 +2,9 @@
 
 namespace Ipeweb\QueryBiulder;
 
+use Exception;
+use RuntimeException;
+
 class Query
 {
 
@@ -154,7 +157,10 @@ class Query
 
         $this->bindReset();
         $stmt->execute();
-        echo $stmt->rowCount() . " linha(s) atualizada(s)";
+        if ($stmt->rowCount() == 0){
+            throw new RuntimeException('Nenhum registro encontrado para esta conição');
+        }
+        echo $stmt->rowCount() . " linha(s) modificadas(s)";
 
         return $stmt;
     }
