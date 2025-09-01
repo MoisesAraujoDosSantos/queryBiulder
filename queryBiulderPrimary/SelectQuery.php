@@ -23,7 +23,7 @@ class SelectQuery extends Query
         }
         return parent::where($condiction,$NumberCondiction,  $operator);
     }
-    public function order(int $NumbeOrder, array $columnName, ?array $order = NULL)
+    public function order(int $NumberOrder, array $columnName, ?array $order = NULL)
     {
         $this->validateIdentifier($columnName);
         $formatedOrder = $this->genericOrdemClause( $columnName,$NumberOrder, $order);
