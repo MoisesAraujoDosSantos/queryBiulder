@@ -16,12 +16,10 @@ class SelectQuery extends Query
 
 
     //o numbercondition vai ser opcional na mae, mas aqui obrigatorio, é so colocar um if e lançar exceção
-    public function where(array $condiction,?int $NumberCondiction = null, ?array $operator = null)
+    public function where(array $condiction, ?array $operator = null)
     {
-        if ($NumberCondiction == null) {
-            throw new \Exception('You must specify the number of conditions!');
-        }
-        return parent::where($condiction,$NumberCondiction,  $operator);
+        
+        return parent::where($condiction, $operator);
     }
     public function order(int $NumberOrder, array $columnName, ?array $order = NULL)
     {
@@ -35,11 +33,11 @@ class SelectQuery extends Query
             }
         }
 
-        if ($NumberOrder != 1 and count($columnName) == $NumberOrder and count($order) == $NumberOrder - 1) {
-            $this->queries["order"] = 'ORDER BY ' . implode($formatedOrder) . " ";
+        if (count($columnName) == $NumberOrder and (count($order) == null ||count($order) == $NumberOrder)) {
+            var_dump($this->queries["order"] = 'ORDER BY ' . implode(", ",$formatedOrder) . " ");
             return $this;
         }
-        $this->queries["order"] = 'ORDER BY ' . implode(" ", $columnName) . " ";
+         $this->queries["order"] = 'ORDER BY ' . implode(" ", $columnName) . " ";
         return $this;
     }
     public function limit(int $limitNumber)

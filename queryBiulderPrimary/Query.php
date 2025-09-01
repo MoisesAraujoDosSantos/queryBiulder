@@ -7,7 +7,8 @@ use RuntimeException;
 
 class Query
 {
-
+    
+    public int $a = 0;
     public array $queries = [
         'select' => '',
         'from'   => '',
@@ -52,35 +53,43 @@ class Query
         }
         return $formated;
     }
-    public function where(array $condiction, ?int $NumberCondiction = null, ?array $operator = null)
+    public function where(array $condiction, ?array $operator = null)
     {
-        $tratament = $this->genericOrdemClause($condiction, $NumberCondiction, $operator);
+        // $tratament = $this->genericOrdemClause($condiction, $NumberCondiction, $operator);
         $formatedWhere = [];
-        if ($NumberCondiction != 1 and count($condiction) == $NumberCondiction and count($operator) == $NumberCondiction - 1) {
-            $formatedWhere = $this->placeHolder($condiction, "where");
+        // if ($NumberCondiction != 1 and count($condiction) == $NumberCondiction and count($operator) == $NumberCondiction - 1) {
+        //     $formatedWhere = $this->placeHolder($condiction, "where");
 
-            $this->queries["where"] =  'WHERE ' . implode(" ", $formatedWhere) . " ";
-            return $this;
-        }
-        $this->queries["where"] = 'WHERE ' . implode(" ", $this->placeHolder($condiction, "where")) . " ";
+        //     $this->queries["where"] =  'WHERE ' . implode(" ", $formatedWhere) . " " . implode(" ",$operator)." ";
+
+        //     return $this;
+        // }
+
+        if(count($condiction) > 1){}
+
+        var_dump($this->queries["where"] = 'WHERE ' . implode(" ", $this->placeHolder($condiction, "where")));
+        // var_dump($this->bindings);
         return $this;
-    }
-
+    }  
     public function placeHolder(array|string $textValue, string $clauseName)
     {
         $formatedQuery = [];
         if (is_array($textValue)) {
+            // for ($i =; $i < count($textValue);$i ++){}   
             foreach ($textValue as $item) {
                 if (strpos($item, '=') !== false) {
                     [$field, $value] = explode('=', $item, 2);
                     $field = trim($field);
                     $value = trim($value);
-                    $this->bindings[$clauseName][$field] = $value;
+                    // evitando sobrescrita caso o nome  do campo seja o mesmo
+                    $this->bindings[$clauseName][$field . $this->a] = $value;
                     $formatedQuery[] = $field . ' = :' . $field;
+                    $this->a += 1;
                 } else {
                     // Para inserts, só retorna o nome do campo
                     $formatedQuery[] = trim($item);
                 }
+                
             }
             return $formatedQuery;
         }
@@ -152,13 +161,17 @@ class Query
     public function execute(\PDO $pdo)
     {
         $sqlQuery = $this->toSql();
-        $bindings = $this->bindings;
+        $bindings = array_filter($this->bindings); //retorna so os que tem valores        
+        foreach($bindings as $binding =>$value ){
+            print_r($value);
+        }
+
         $stmt = $this->prepare($pdo, $sqlQuery, $bindings);
 
         $this->bindReset();
         $stmt->execute();
         if ($stmt->rowCount() == 0){
-            throw new RuntimeException('Nenhum registro encontrado para esta conição');
+            throw new RuntimeException('Nenhum registro encontrado para esta condição');
         }
         echo $stmt->rowCount() . " linha(s) modificadas(s)";
 
