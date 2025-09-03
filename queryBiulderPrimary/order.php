@@ -12,13 +12,14 @@ class order
 
         return $query;
     }
-    public function where(array $clauses, array|string $operator, array $operation) //adicionar validação pra valor nulo se tiver mais de um operador
+    public function where(array $clauses, array|string $operator, ?array $operation = null) //adicionar validação pra valor nulo se tiver mais de um operador
     {
         $where = [];
         foreach ($clauses as $clause => $quantity) {
             if (is_string($operator)) {
                 $operator = explode(" ", $operator);
             }
+            echo "p";
             if (is_array($operator)) {
 
                 foreach ($operator as $op) {
@@ -34,26 +35,25 @@ class order
         for ($i = 0; $i < count($where); $i++) {
 
             if ($i == 0) {
-                $tratedWhere .= " {$where[$i]}";
+                $tratedWhere .= "{$where[$i]}";
             } else {
-                $tratedWhere .= " {$operation[$i - 1]} {$where[$i]} ";
+                $tratedWhere .= "{$operation[$i - 1]} {$where[$i]} ";
             }
-        }
+        } $this->queries['where'] = 'WHERE' . $tratedWhere;
+        return $this;
     }
 
-    public function biulderPlaceholder(string $clause, string $quantity, string|array $operator, string $clauseName)
+    public function biulderPlaceholder(string $clause, string $quantity, string $operator, string $clauseName)
     {
         $formatedQuery = [];
-        if (is_string($operator)) {
-            $operator = explode(' ', $operator);
-        }
+
         $field = trim($clause);
         $value = trim($quantity);
         $fieldIncrement = "{$field}_{$this->i}";
         // evitando sobrescrita caso o nome  do campo seja o mesmo
         $this->bindings[$clauseName][$fieldIncrement] = $value;
         
-        $formatedQuery[] = $field .  $operator .' :' . "{$field}_{$this->i}";
+        $formatedQuery[] ="$field $operator :$fieldIncrement";
         return $formatedQuery;
     }
 }

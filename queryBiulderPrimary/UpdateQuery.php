@@ -17,14 +17,15 @@ class UpdateQuery extends Query{
 
     public function set(array $columns, array $values)
     {
+        
         if (count($columns) != count($values)) {
             throw new \Exception('Columns and values must have the same length');
         }
         $querie = [];
         for ($i = 0; $i < count($columns); $i++) {
-            $querie[] = $columns[$i] . " = " . $values[$i];
+            $querieFormat = array_merge($querieFormat, $this->placeHolder($columns[$i], $values[$i], '=' "set"));
+           
         }
-        $querieFormat = $this->placeHolder($querie, "set");
         $this->queries['set'] = ' SET ' . implode(', ', $querieFormat);
         $this->where($this->requiremnt,null);
         $this->requiremnt = null;
