@@ -7,7 +7,8 @@ use RuntimeException;
 
 class Query
 {
-    
+    public $i = 0;
+
     public int $a = 0;
     public array $queries = [
         'select' => '',
@@ -38,84 +39,81 @@ class Query
         return $this;
     }
 
-    protected function genericOrdemClause(array $fieldExpression, ?int $Quantity = null, ?array $modifiers = NULL)
-    {
-        $formated = [];
-        $formated[] = $fieldExpression[0];
-        if ($Quantity != 1 and count($fieldExpression) == $Quantity and count($modifiers) == $Quantity - 1) {
 
-            for ($i = 1; $i < count($fieldExpression); $i++) {
-                if ($i < count($fieldExpression)) {
-                    $formated[] = $modifiers[($i - 1) % count($modifiers)];
-                    $formated[] = $fieldExpression[$i];
-                }
+    public function resetIncrement(): void
+    {
+        $this->i = 0;
+    }
+    public function where(array $clauses, array|string $operator, ?array $operation = null) //adicionar validação pra valor nulo se tiver mais de um operador
+    {
+        $where = [];
+        $this->resetIncrement();
+        if (is_string($operator)) {
+            $operator = explode(" ", $operator);
+        }
+        foreach ($clauses as $key => $value) {
+            if (str_contains($value, ",")) {
+                $clauses[$key] = explode(",", $value);
             }
         }
-        return $formated;
-    }
-    public function where(array $condiction, ?array $operator = null)
-    {
-        // $tratament = $this->genericOrdemClause($condiction, $NumberCondiction, $operator);
-        $formatedWhere = [];
-        // if ($NumberCondiction != 1 and count($condiction) == $NumberCondiction and count($operator) == $NumberCondiction - 1) {
-        //     $formatedWhere = $this->placeHolder($condiction, "where");
+        foreach ($clauses as $col => $values) {
+            $values = is_array($values) ? $values : [$values];
 
-        //     $this->queries["where"] =  'WHERE ' . implode(" ", $formatedWhere) . " " . implode(" ",$operator)." ";
+            foreach ($values as $key => $val) {
+                if (is_array($operator)) {
+                    foreach ($operator as $op) {
+                        $where = array_merge(
+                            $where,
+                            $this->biulderPlaceholder($col, $val, $op, 'where')
+                        );
+                    }
+                }
+                $this->i++;
+            }
+        }
 
-        //     return $this;
-        // }
+        $tratedWhere = '';
+        if (count($operation) !== 1) {
 
-        if(count($condiction) > 1){}
+            for ($i = 0; $i < count($where); $i++) {
 
-        var_dump($this->queries["where"] = 'WHERE ' . implode(" ", $this->placeHolder($condiction, "where")));
-        // var_dump($this->bindings);
+                if ($i == 0) {
+                    $tratedWhere .= " {$where[$i]}";
+                } else {
+                    $tratedWhere .= " {$operation[$i - 1]} {$where[$i]} ";
+                }
+            }
+        } else {
+            $tratedWhere = implode(" $operation[0] ", $where);
+        }
+        $this->queries['where'] = ' WHERE ' . $tratedWhere;
+
         return $this;
-    }  
-    public function placeHolder(array|string $textValue, string $clauseName)
+    }
+    public function biulderPlaceholder(string $clause, string $quantity, string $operator, string $clauseName)
     {
         $formatedQuery = [];
-        if (is_array($textValue)) {
-            // for ($i =; $i < count($textValue);$i ++){}   
-            foreach ($textValue as $item) {
-                if (strpos($item, '=') !== false) {
-                    [$field, $value] = explode('=', $item, 2);
-                    $field = trim($field);
-                    $value = trim($value);
-                    // evitando sobrescrita caso o nome  do campo seja o mesmo
-                    $this->bindings[$clauseName][$field . $this->a] = $value;
-                    $formatedQuery[] = $field . ' = :' . $field;
-                    $this->a += 1;
-                } else {
-                    // Para inserts, só retorna o nome do campo
-                    $formatedQuery[] = trim($item);
-                }
-                
-            }
-            return $formatedQuery;
-        }
-        if (strpos($textValue, '=') !== false) {
-            [$field, $value] = explode('=', $textValue, 2);
-            $field = trim($field);
-            $value = trim($value);
-            $this->bindings[$clauseName][$field] = $value;
-            $formatedQuery[] = $field . ' = :' . $field;
-        } else {
-            $formatedQuery[] = trim($textValue);
-        }
+
+        $field = trim($clause);
+        $value = trim($quantity);
+        $fieldIncrement = "{$field}_{$this->i}";
+        // evitando sobrescrita caso o nome  do campo seja o mesmo
+        $this->bindings[$clauseName][$fieldIncrement] = $value;
+
+        $formatedQuery[] = "$field $operator :$fieldIncrement";
         return $formatedQuery;
     }
-
     protected function validateIdentifier(string|array $name)
     {
         if (is_array($name)) {
             foreach ($name as $item) {
-                if (!preg_match('/^[a-zA-Z0-9_]*$/', $item)) {
+                if (!preg_match('/^[a-zA-Z0-9_*]*$/', $item)) {
                     throw new \InvalidArgumentException("Invalid identifier: $item");
                 }
             }
             return $name;
         }
-        if (!preg_match('/^[a-zA-Z0-9_]*$/', $name)) {
+        if (!preg_match('/^[a-zA-Z0-9_*]*$/', $name)) {
             throw new \InvalidArgumentException("Invalid identifier: $name");
         }
         return $name;
@@ -162,7 +160,7 @@ class Query
     {
         $sqlQuery = $this->toSql();
         $bindings = array_filter($this->bindings); //retorna so os que tem valores        
-        foreach($bindings as $binding =>$value ){
+        foreach ($bindings as $binding => $value) {
             print_r($value);
         }
 
@@ -170,7 +168,7 @@ class Query
 
         $this->bindReset();
         $stmt->execute();
-        if ($stmt->rowCount() == 0){
+        if ($stmt->rowCount() == 0) {
             throw new RuntimeException('Nenhum registro encontrado para esta condição');
         }
         echo $stmt->rowCount() . " linha(s) modificadas(s)";

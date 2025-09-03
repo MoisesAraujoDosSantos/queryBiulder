@@ -15,29 +15,23 @@ class SelectQuery extends Query
     }
 
 
-    //o numbercondition vai ser opcional na mae, mas aqui obrigatorio, é so colocar um if e lançar exceção
-    public function where(array $condiction, ?array $operator = null)
-    {
-        
-        return parent::where($condiction, $operator);
-    }
-    public function order(int $NumberOrder, array $columnName, ?array $order = NULL)
-    {
-        $this->validateIdentifier($columnName);
-        $formatedOrder = $this->genericOrdemClause( $columnName,$NumberOrder, $order);
-        if ($order !== null) {
-            foreach ($order as $typeOrder) {
-                if ($typeOrder !== "ASC" && $typeOrder !== "DESC") {
-                    throw new \InvalidArgumentException("Invalid order: $typeOrder");
-                }
-            }
-        }
 
-        if (count($columnName) == $NumberOrder and (count($order) == null ||count($order) == $NumberOrder)) {
-            var_dump($this->queries["order"] = 'ORDER BY ' . implode(", ",$formatedOrder) . " ");
-            return $this;
+     public function order(array $conditions)
+    {
+        foreach ($conditions as $column => $value) {
+            try {
+            if(strtoupper($value)!= 'ASC' && strtoupper($value)!= 'DESC'  ){
+                throw new \Exception('Nome de ordenação errado, Nomes Válidos: ASC ou DESC');
+            }
+            $ordem[] = $column . " " . $value;
         }
-         $this->queries["order"] = 'ORDER BY ' . implode(" ", $columnName) . " ";
+        catch(\Exception $e){
+            print_r($e->getMessage());
+        }
+        ;} 
+        $query = ' ORDER BY ' . implode(" ,", $ordem);
+        $this->queries['order'] = $query;
+
         return $this;
     }
     public function limit(int $limitNumber)

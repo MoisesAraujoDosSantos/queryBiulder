@@ -29,8 +29,8 @@ $string = ' or 1=1; --';
 $s = new SelectQuery();
 $s->select(['id', 'nome'])
   ->from('clients', 'c')
-  ->where(['nome = Jeanne','nome = Artoria']);
-  // ->order(1,['nome'],['DESC']);
+  ->where(['nome' => 'Jeanne,Artoria'],['=']['and'])
+  ->order(['nome'=>'DESC']);
 $result = $s->execute($pdo)->fetchAll(PDO::FETCH_ASSOC);
 print_r($result);
 echo PHP_EOL;

@@ -4,7 +4,7 @@ namespace Ipeweb\QueryBiulder;
 
 class UpdateQuery extends Query{
     public ?array $requiremnt;
-    public function update($tableName, $condition)
+    public function update($tableName, $condition,array $clauses,array $operator, ?array $operations = null)
     {
         $this->validateIdentifier($tableName);
         if (!is_array($condition) || empty($condition)) {
@@ -15,19 +15,16 @@ class UpdateQuery extends Query{
         return $this;
     }
 
-    public function set(array $columns, array $values)
+    public function set(array $conditionals,array $condi, ?array $logicalConditions)
     {
-        
-        if (count($columns) != count($values)) {
-            throw new \Exception('Columns and values must have the same length');
+        $querieFormat = [];
+        foreach($conditionals as $conditional => $amount){
+
+            $querieFormat = array_merge($querieFormat, $this->biulderPlaceholder($conditional, $amount, '=', "set"));
         }
-        $querie = [];
-        for ($i = 0; $i < count($columns); $i++) {
-            $querieFormat = array_merge($querieFormat, $this->placeHolder($columns[$i], $values[$i], '=' "set"));
-           
-        }
+
         $this->queries['set'] = ' SET ' . implode(', ', $querieFormat);
-        $this->where($this->requiremnt,null);
+        $this->where($condi, ['='], $logicalConditions);
         $this->requiremnt = null;
         return $this;
     }
