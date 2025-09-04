@@ -62,5 +62,5 @@ $pdo = new PDO("pgsql:host=localhost;port=port;dbname= 'name'",'usuario','senha'
 $u = new UpdateQuery();
 $u->update('tabela')
 ->set(['coluna' => "valor"],['condição'=>'valor'],['operador_de_comparação_where]);
-$u->execute($pdo);
+$u->execute($pdo); 
 
