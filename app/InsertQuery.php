@@ -1,10 +1,9 @@
 <?php
 namespace Ipeweb\QueryBiulder;
 
-
 class InsertQuery extends Query
 {
-
+    public array $columns = [];
     public function insert(string $tableName, array $columns) {
         $this->validateIdentifier($tableName);
         $this->validateIdentifier($columns);
@@ -35,5 +34,6 @@ class InsertQuery extends Query
         $this->querieReset();
         return $sqlQuery . ";";
     }
-}
+} 
+
 
