@@ -6,11 +6,11 @@ namespace Ipeweb\QueryBiulder;
 class DeleteQuery extends Query{
 
 
-    public function delete($tableName,array $clauses,array $operators,?array $logicalConditions = null)
+    public function delete($tableName,array $whereCriterion,array $operators,?array $logicalConditions = null)
     {
        $this->validateIdentifier($tableName);
        $this->queries['delete'] = 'DELETE';
-       $this->from($tableName)->where($clauses,$operators,$logicalConditions); 
+       $this->from($tableName)->where($whereCriterion,$operators,$logicalConditions);
        return $this;
     }
     public function toSql()

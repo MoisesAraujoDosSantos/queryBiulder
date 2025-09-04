@@ -73,7 +73,8 @@ class Query
         }
 
         $tratedWhere = '';
-        if (count($operation) !== 1) {
+        // passar se nao for nulo
+        if ($operation != null &&count($operation) !== 1) {
 
             for ($i = 0; $i < count($where); $i++) {
 
@@ -83,18 +84,20 @@ class Query
                     $tratedWhere .= " {$operation[$i - 1]} {$where[$i]} ";
                 }
             }
-        } else {
-            $tratedWhere = implode(" $operation[0] ", $where);
+        } 
+        else {
+            $tratedWhere = implode(" ", $where);
         }
+        
         $this->queries['where'] = ' WHERE ' . $tratedWhere;
 
         return $this;
     }
-    public function biulderPlaceholder(string $clause, string $quantity, string $operator, string $clauseName)
+    public function biulderPlaceholder(string $criterion, string $quantity, string $operator, string $clauseName)
     {
         $formatedQuery = [];
 
-        $field = trim($clause);
+        $field = trim($criterion);
         $value = trim($quantity);
         $fieldIncrement = "{$field}_{$this->i}";
         // evitando sobrescrita caso o nome  do campo seja o mesmo
@@ -151,22 +154,21 @@ class Query
         $stmt = $pdo->prepare($sqlQuery);
         foreach ($bindings as $clauseValues) {
             foreach ($clauseValues as $placeholder => $value) {
-                $stmt->bindValue(':' . $placeholder, $value);
+
+                $stmt->bindValue(":".$placeholder, $value);
             }
         }
+        
         return $stmt;
     }
     public function execute(\PDO $pdo)
     {
         $sqlQuery = $this->toSql();
-        $bindings = array_filter($this->bindings); //retorna so os que tem valores        
-        foreach ($bindings as $binding => $value) {
-            print_r($value);
-        }
+        $bindings = array_filter($this->bindings);      
+
 
         $stmt = $this->prepare($pdo, $sqlQuery, $bindings);
 
-        $this->bindReset();
         $stmt->execute();
         if ($stmt->rowCount() == 0) {
             throw new RuntimeException('Nenhum registro encontrado para esta condição');

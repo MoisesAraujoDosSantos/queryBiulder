@@ -1,7 +1,6 @@
 <?php
 namespace Ipeweb\QueryBiulder;
 
-
 class InsertQuery extends Query
 {
     public array $columns = [];
@@ -35,5 +34,6 @@ class InsertQuery extends Query
         $this->querieReset();
         return $sqlQuery . ";";
     }
-}
+} 
+
 

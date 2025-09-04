@@ -6,7 +6,6 @@ namespace Ipeweb\QueryBiulder;
 class SelectQuery extends Query
 {
 
-
     public function select(array $columns)
     {
         $this->validateIdentifier($columns);
@@ -14,26 +13,22 @@ class SelectQuery extends Query
         return $this;
     }
 
-
-
      public function order(array $conditions)
     {
         foreach ($conditions as $column => $value) {
-            try {
+
             if(strtoupper($value)!= 'ASC' && strtoupper($value)!= 'DESC'  ){
-                throw new \Exception('Nome de ordenação errado, Nomes Válidos: ASC ou DESC');
+                throw new \InvalidArgumentException('Wrong sort name, Valid Names: ASC or DESC');
             }
             $ordem[] = $column . " " . $value;
         }
-        catch(\Exception $e){
-            print_r($e->getMessage());
-        }
-        ;} 
+ 
         $query = ' ORDER BY ' . implode(" ,", $ordem);
         $this->queries['order'] = $query;
 
         return $this;
     }
+
     public function limit(int $limitNumber)
     {
         if ($limitNumber <= 0) {

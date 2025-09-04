@@ -3,19 +3,19 @@ namespace Ipeweb\QueryBiulder;
 
 
 class UpdateQuery extends Query{
-    public ?array $requiremnt;
-    public function update($tableName, $condition,array $clauses,array $operator, ?array $operations = null)
+    
+    public function update($tableName)
     {
         $this->validateIdentifier($tableName);
-        if (!is_array($condition) || empty($condition)) {
-            throw new \InvalidArgumentException('Update sem condição não é permitido. Passe um array de condição.');
-        }
+        // if (!is_array($condition) || empty($condition)) {
+        //     throw new \InvalidArgumentException("Update without condition is not allowed. Pass a condition array.");
+        // }
         $this->queries['update'] = 'UPDATE ' . $tableName;
-        $this->requiremnt = $condition;
+        
         return $this;
     }
 
-    public function set(array $conditionals,array $condi, ?array $logicalConditions)
+    public function set(array $conditionals,array $whereCriterion,array $condition ,?array $logicalConditions = null)
     {
         $querieFormat = [];
         foreach($conditionals as $conditional => $amount){
@@ -24,8 +24,8 @@ class UpdateQuery extends Query{
         }
 
         $this->queries['set'] = ' SET ' . implode(', ', $querieFormat);
-        $this->where($condi, ['='], $logicalConditions);
-        $this->requiremnt = null;
+        $this->where($whereCriterion, $condition, $logicalConditions);
+
         return $this;
     }
 
@@ -35,7 +35,7 @@ class UpdateQuery extends Query{
         if (!empty($this->queries['where'])) {
             $sqlQuery .= ' ' . $this->queries['where'];
         }
-        // $this->querieReset();
+        $this->querieReset();
         return trim($sqlQuery) . ";";
     }
 
