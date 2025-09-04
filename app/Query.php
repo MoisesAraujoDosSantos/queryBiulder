@@ -110,13 +110,13 @@ class Query
     {
         if (is_array($name)) {
             foreach ($name as $item) {
-                if (!preg_match('/^[a-zA-Z0-9_*]*$/', $item)) {
+                if (!preg_match('/^[\p{L}0-9_*]+$/u', $item)) {
                     throw new \InvalidArgumentException("Invalid identifier: $item");
                 }
             }
             return $name;
         }
-        if (!preg_match('/^[a-zA-Z0-9_*]*$/', $name)) {
+        if (!preg_match('/^[\p{L}0-9_*]+$/u', $name)) {
             throw new \InvalidArgumentException("Invalid identifier: $name");
         }
         return $name;
