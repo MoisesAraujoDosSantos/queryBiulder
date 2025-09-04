@@ -18,6 +18,8 @@ class InsertQuery extends Query
 
     public function values(array $values)
     {
+        $this->validateIdentifier($values);
+
         $placeholders = [];
         foreach ($this->columns as $i => $col) {
             $val = $values[$i] ?? null;
