@@ -1,5 +1,5 @@
 {
-    "name": "vendor/elementor",
+    "name": "elementor/queryBiulder",
     "type": "library",
     "autoload": {
         "psr-4": {
