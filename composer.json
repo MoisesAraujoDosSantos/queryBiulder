@@ -1,5 +1,5 @@
 {
-    "name": "elementor/queryBiulder",
+    "name": "spring/query-biulder",
     "type": "library",
     "autoload": {
         "psr-4": {
