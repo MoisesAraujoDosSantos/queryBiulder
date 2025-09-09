@@ -1,6 +1,6 @@
 {
-    "name": "ipeweb/query-biulder",
-    "type": "project",
+    "name": "vendor/elementor",
+    "type": "library",
     "autoload": {
         "psr-4": {
             "Ipeweb\\QueryBiulder\\": "app/"
