@@ -1,5 +1,5 @@
 {
-    "name": "spring/query-biulder",
+    "name": "fall/query-biulder",
     "type": "library",
     "autoload": {
         "psr-4": {
