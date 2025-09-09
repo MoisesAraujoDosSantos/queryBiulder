@@ -1,5 +1,5 @@
 {
-    "name": "fall/query-biulder",
+    "name": "moises/query-biulder",
     "type": "library",
     "autoload": {
         "psr-4": {
