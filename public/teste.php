@@ -32,11 +32,11 @@ try {
 
   // passou
   $s = new SelectQuery();
-  $s->select(['*'])
-    ->from('clients', 'c')
+  $s->select(['nome','id_student'])
+    ->from('student','s')
     // ->where(['nome'=>'maria,Jeanne'],['='],['or'])
-  ->order(['nome'=>'DESC'])
-  ->join('INNER JOIN', 'orders', ['c.id','o.client_id'], '=' , 'o');
+  ->order(['nome'=>'DESC']);
+  // ->join('INNER JOIN', 'phone', ['s.id_student','p.id_student'], '!=','p');
   $result = $s->execute($pdo)->fetchAll(PDO::FETCH_ASSOC);
   echo PHP_EOL;
   print_r($result);

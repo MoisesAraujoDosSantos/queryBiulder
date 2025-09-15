@@ -58,24 +58,24 @@ class SelectQuery extends Query
 
     public function join(string $typeOfJoin, string $table, array $joinCondition,string $operator, ?string $alias = null, ?array $logicOperator = null,?array $extraConditions = null)
     {
-        // join(inner join, table, ['id', 2]usar placeholderdps,'=')
+
         $querie = '';
         $newCondition = '';
-
 
         $querie .= "{$typeOfJoin} {$this->validateIdentifierGeneric($table)}";
 
         if($alias !== null){
-            $querie .= " {$alias}";
+            $querie .= " AS {$alias}";
         }
 
         if (count($joinCondition) > 2) {
             throw new Exception("so pode ter duas condições de junção neste momento");
         }
 
-        $joinCondition = $this->biulderPlaceholder($joinCondition[0],$joinCondition[1],$operator,'join');
+        $this->validateIdentifierGeneric($joinCondition[0]);
+        $this->validateIdentifierGeneric($joinCondition[1]);
 
-        $newCondition = implode(" ", $joinCondition);
+        $newCondition = implode(" {$operator}", $joinCondition);
      
         $querie .= ' ON ' . $newCondition;
 
@@ -85,13 +85,12 @@ class SelectQuery extends Query
             }
             $extraCondition = $this->createExtraCondition($logicOperator, $extraConditions);
             
-            $querie .= rtrim($extraCondition);
-        
+            $querie .= rtrim($extraCondition);  
         }
+
         $this->queries['join']  .= $querie;
         return $this;
     }
-
 
     public function toSql()
     {
