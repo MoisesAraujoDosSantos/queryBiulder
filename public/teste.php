@@ -18,28 +18,29 @@ try {
 
 // passou
 // $string = ' or 1=1; --';
-$i = new InsertQuery();
-$i->insert('clients', ['nome'])->values(['João']);
-$i->execute($pdo);
-echo PHP_EOL;
-
-// passou
-// $u = new UpdateQuery();
-// $u->update('clients')
-//   ->set(['nome' => "Artoria Pendragon"],['id'=>'7'],['=']);
-// print_r($u->execute($pdo));
+// $i = new InsertQuery();
+// $i->insert('clients', ['nome'])->values(['João']);
+// $i->execute($pdo);
 // echo PHP_EOL;
 
-// passou
-// $s = new SelectQuery();
-// $s->select(['*'])
-//   ->from('clients', 'c')
-//   // ->where(['nome'=>'maria,Jeanne'],['='],['or'])
-//   ->order(['nome'=>'DESC']);
-// $result = $s->execute($pdo)->fetchAll(PDO::FETCH_ASSOC);
-// echo PHP_EOL;
-// print_r($result);
-// echo PHP_EOL;
+  // passou
+  // $u = new UpdateQuery();
+  // $u->update('clients')
+  //   ->set(['nome' => "Artoria Pendragon"],['id'=>'7'],['=']);
+  // print_r($u->execute($pdo));
+  // echo PHP_EOL;
+
+  // passou
+  $s = new SelectQuery();
+  $s->select(['*'])
+    ->from('clients', 'c')
+    // ->where(['nome'=>'maria,Jeanne'],['='],['or'])
+  ->order(['nome'=>'DESC'])
+  ->join('INNER JOIN', 'orders', ['c.id','o.client_id'], '=' , 'o');
+  $result = $s->execute($pdo)->fetchAll(PDO::FETCH_ASSOC);
+  echo PHP_EOL;
+  print_r($result);
+  echo PHP_EOL;
 } catch(\Exception $e){
   print_r("ERRO: {$e->getMessage()}");
 }

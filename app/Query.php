@@ -15,6 +15,7 @@ class Query
         'from'   => '',
         'where'  => '',
         'order'  => '',
+        'join'   => '',
         'limit'  => '',
     ];
     public array $bindings = [
@@ -22,6 +23,7 @@ class Query
         'from'   => [],
         'where'  => [],
         'order'  => [],
+        'join'   => [],
         'limit'  => [],
     ];
 
@@ -130,6 +132,7 @@ class Query
             'where'  => '',
             'order'  => '',
             'limit'  => '',
+            'join'   => '',
         ];
     }
 
@@ -141,6 +144,7 @@ class Query
             'where'  => [],
             'order'  => [],
             'limit'  => [],
+            'join'   => [],
         ];
     }
 
@@ -173,7 +177,6 @@ class Query
         if ($stmt->rowCount() == 0) {
             throw new RuntimeException('Nenhum registro encontrado para esta condição');
         }
-        echo $stmt->rowCount() . " linha(s) modificadas(s)";
 
         return $stmt;
     }
