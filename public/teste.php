@@ -1,10 +1,10 @@
 <?php
 
 
-use Ipeweb\QueryBiulder\SelectQuery;
-use Ipeweb\QueryBiulder\InsertQuery;
-use Ipeweb\QueryBiulder\UpdateQuery;
-use Ipeweb\QueryBiulder\DeleteQuery;
+use Moises\QueryBiulder\SelectQuery;
+use Moises\QueryBiulder\InsertQuery;
+use Moises\QueryBiulder\UpdateQuery;
+use Moises\QueryBiulder\DeleteQuery;
 
 require __DIR__ . '/../vendor/autoload.php';
 
