@@ -5,6 +5,10 @@
 <p>depois instanciar uma das Queries (Insert,Delete,Update ou Select)</p>
 <p>Apos isso é só usar os metodos delas.</p>
 
+<h2>Instalação</h2>
+
+<p>composer require moises/query-biulder</p>
+
 <h2>Classes e Metodos</h2>
 
 <h3>Classe DeleteQuery :</h3>
