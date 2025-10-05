@@ -1,5 +1,5 @@
 <?php
-namespace Ipeweb\QueryBiulder;
+namespace Moises\QueryBiulder;
 
 
 class UpdateQuery extends Query{

@@ -1,9 +1,10 @@
 {
     "name": "moises/query-biulder",
     "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Ipeweb\\QueryBiulder\\": "app/"
+            "Moises\\QueryBiulder\\": "app/"
         }
     },
     "authors": [

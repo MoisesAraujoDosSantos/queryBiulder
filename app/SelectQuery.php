@@ -1,5 +1,5 @@
 <?php
-namespace Ipeweb\QueryBiulder;
+namespace Moises\QueryBiulder;
 
 use Exception;
 
