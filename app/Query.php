@@ -2,7 +2,7 @@
 
 namespace Moises\QueryBiulder;
 
-use Exception;
+
 use RuntimeException;
 
 class Query
@@ -168,13 +168,16 @@ class Query
     public function execute(\PDO $pdo)
     {
         $sqlQuery = $this->toSql();
-        $bindings = array_filter($this->bindings);      
+        $bindings = array_filter($this->bindings);  
+         
+        $MaybeSelect = substr($sqlQuery,0,7) === "SELECT" ? true : false;
+
 
 
         $stmt = $this->prepare($pdo, $sqlQuery, $bindings);
 
         $stmt->execute();
-        if ($stmt->rowCount() == 0) {
+        if ($stmt->rowCount() == 0 && !$MaybeSelect) {
             throw new RuntimeException('Nenhum registro encontrado para esta condição');
         }
 

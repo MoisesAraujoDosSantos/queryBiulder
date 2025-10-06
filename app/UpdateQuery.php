@@ -7,9 +7,7 @@ class UpdateQuery extends Query{
     public function update($tableName)
     {
         $this->validateIdentifier($tableName);
-        // if (!is_array($condition) || empty($condition)) {
-        //     throw new \InvalidArgumentException("Update without condition is not allowed. Pass a condition array.");
-        // }
+
         $this->queries['update'] = 'UPDATE ' . $tableName;
         
         return $this;
