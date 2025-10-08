@@ -11,7 +11,8 @@ class InsertQuery extends Query
         foreach ($columns as $col) {
             $filtered[] = trim($col);
         }
-        $this->queries['insert'] = 'INSERT INTO ' . $tableName . ' (' . implode(",", $filtered) . ')';
+        $columnName = implode(", ", $filtered);
+        $this->queries['insert'] = "INSERT INTO {$tableName} ({$columnName})";
         $this->columns = $filtered;
         return $this;
     }
@@ -23,17 +24,18 @@ class InsertQuery extends Query
         foreach ($this->columns as $i => $col) {
             $val = $values[$i] ?? null;
             $this->bindings['values'][$col] = $val;
-            $placeholders[] = ':' . $col;
+            $placeholders[] = ":{$col}";
         }
-        $this->queries['values'] = ' VALUES (' . implode(',', $placeholders) . ')';
+        $valuesName = implode(", ", $placeholders);
+        $this->queries['values'] = " VALUES ({$valuesName})";
         return $this;
     }
 
     public function toSql()
     {
-        $sqlQuery = $this->queries['insert'] . $this->queries['values'];
+        $sqlQuery = "{$this->queries['insert']}{$this->queries['values']}";
         $this->querieReset();
-        return $sqlQuery . ";";
+        return "{$sqlQuery};";
     }
 } 
 

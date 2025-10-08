@@ -15,8 +15,8 @@ class DeleteQuery extends Query{
     }
     public function toSql()
     {
-        $sqlQuery = $this->queries['delete']. $this->queries['from'] . $this->queries['where'] ;
+        $sqlQuery = "{$this->queries['delete']} {$this->queries['from']} {$this->queries['where']}";
         $this->querieReset();
-        return $sqlQuery. ";";
+        return "{$sqlQuery};";
     }
 }

@@ -8,7 +8,7 @@ class UpdateQuery extends Query{
     {
         $this->validateIdentifier($tableName);
 
-        $this->queries['update'] = 'UPDATE ' . $tableName;
+        $this->queries['update'] = "UPDATE {$tableName}";
         
         return $this;
     }
@@ -20,8 +20,8 @@ class UpdateQuery extends Query{
 
             $querieFormat = array_merge($querieFormat, $this->biulderPlaceholder($conditional, $amount, '=', "set"));
         }
-
-        $this->queries['set'] = ' SET ' . implode(', ', $querieFormat);
+        $querieFiltered = implode(', ', $querieFormat);
+        $this->queries['set'] = " SET {$querieFiltered}";
         $this->where($whereCriterion, $condition, $logicalConditions);
 
         return $this;
@@ -29,9 +29,9 @@ class UpdateQuery extends Query{
 
     public function toSql()
     {
-        $sqlQuery = $this->queries['update'] . $this->queries['set'];
+        $sqlQuery = "{$this->queries['update']}{$this->queries['set']}";
         if (!empty($this->queries['where'])) {
-            $sqlQuery .= ' ' . $this->queries['where'];
+            $sqlQuery .=  " {$this->queries['where']}";
         }
         $this->querieReset();
         return trim($sqlQuery) . ";";
