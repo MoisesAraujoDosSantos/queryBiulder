@@ -26,6 +26,12 @@ class Query
         'join'   => [],
         'limit'  => [],
     ];
+    private array $types = [
+        'string' => \PDO::PARAM_STR,
+        'integer' => \PDO::PARAM_INT,
+        'boolean' => \PDO::PARAM_BOOL,
+        'NULL'   => \PDO::PARAM_NULL
+    ];
 
     public function from(string $table, ?string $alias = null)
     {
@@ -34,10 +40,10 @@ class Query
             $this->validateIdentifier($alias);
         }
         if ($alias !== null) {
-            $this->queries["from"] = ' FROM ' . $table . ' as ' . $alias . " ";
+            $this->queries["from"] = " FROM {$table} as {$alias} ";
             return $this;
         }
-        $this->queries["from"] = ' FROM ' . $table . " ";
+        $this->queries["from"] = " FROM {$table} ";
         return $this;
     }
 
@@ -76,7 +82,7 @@ class Query
 
         $tratedWhere = '';
         // passar se nao for nulo
-        if ($operation != null &&count($operation) !== 1) {
+        if ($operation != null && count($operation) !== 1) {
 
             for ($i = 0; $i < count($where); $i++) {
 
@@ -86,12 +92,11 @@ class Query
                     $tratedWhere .= " {$operation[$i - 1]} {$where[$i]} ";
                 }
             }
-        } 
-        else {
+        } else {
             $tratedWhere = implode(" ", $where);
         }
-        
-        $this->queries['where'] = ' WHERE ' . $tratedWhere;
+
+        $this->queries['where'] = " WHERE {$tratedWhere}";
 
         return $this;
     }
@@ -105,7 +110,7 @@ class Query
         // evitando sobrescrita caso o nome  do campo seja o mesmo
         $this->bindings[$clauseName][$fieldIncrement] = $value;
 
-        $formatedQuery[] = "$field $operator :$fieldIncrement";
+        $formatedQuery[] = "{$field} {$operator} :{$fieldIncrement}";
         return $formatedQuery;
     }
     protected function validateIdentifier(string|array $name)
@@ -113,7 +118,7 @@ class Query
         if (is_array($name)) {
             foreach ($name as $item) {
                 if (!preg_match('/^[\p{L}0-9_*]+$/u', $item)) {
-                    throw new \InvalidArgumentException("Invalid identifier: $item");
+                    throw new \InvalidArgumentException("Invalid identifier: {$item}");
                 }
             }
             return $name;
@@ -158,19 +163,20 @@ class Query
         $stmt = $pdo->prepare($sqlQuery);
         foreach ($bindings as $clauseValues) {
             foreach ($clauseValues as $placeholder => $value) {
+                $paramType = $this->types[gettype($value)] ?? \PDO::PARAM_STR;
 
-                $stmt->bindValue(":".$placeholder, $value);
+                $stmt->bindValue(":{$placeholder}", $value, $paramType);
             }
         }
-        
+
         return $stmt;
     }
     public function execute(\PDO $pdo)
     {
         $sqlQuery = $this->toSql();
-        $bindings = array_filter($this->bindings);  
-         
-        $MaybeSelect = substr($sqlQuery,0,7) === "SELECT" ? true : false;
+        $bindings = array_filter($this->bindings);
+
+        $MaybeSelect = substr($sqlQuery, 0, 7) === "SELECT" ? true : false;
 
 
 
