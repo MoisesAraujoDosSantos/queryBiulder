@@ -52,6 +52,7 @@ class Query
     {
         $this->i = 0;
     }
+    //o where nao esta concatenando certo o array de operadores e o de condições, ta saindo op1 op2, em vez de op1 and op2
     public function where(array $clauses, array|string $operator, ?array $operation = null) //adicionar validação pra valor nulo se tiver mais de um operador
     {
         $where = [];
@@ -100,12 +101,13 @@ class Query
 
         return $this;
     }
-    public function biulderPlaceholder(string $criterion, string $quantity, string $operator, string $clauseName)
+    public function biulderPlaceholder(string $criterion, mixed $quantity, string $operator, string $clauseName)
     {
         $formatedQuery = [];
 
         $field = trim($criterion);
-        $value = trim($quantity);
+        $value = is_string($quantity) ? trim($quantity) : $quantity;
+        var_dump($value);
         $fieldIncrement = "{$field}_{$this->i}";
         // evitando sobrescrita caso o nome  do campo seja o mesmo
         $this->bindings[$clauseName][$fieldIncrement] = $value;
@@ -176,14 +178,12 @@ class Query
         $sqlQuery = $this->toSql();
         $bindings = array_filter($this->bindings);
 
-        $MaybeSelect = substr($sqlQuery, 0, 7) === "SELECT" ? true : false;
-
+        $is_Select = substr($sqlQuery, 0, 6) === "SELECT" ? true : false;
 
 
         $stmt = $this->prepare($pdo, $sqlQuery, $bindings);
-
-        $stmt->execute();
-        if ($stmt->rowCount() == 0 && !$MaybeSelect) {
+        $stmt->execute(); 
+        if ($stmt->rowCount() == 0 && !$is_Select) {
             throw new RuntimeException('Nenhum registro encontrado para esta condição');
         }
 
