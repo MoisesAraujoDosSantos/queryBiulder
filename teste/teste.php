@@ -33,8 +33,8 @@ try {
   $s = new SelectQuery();
   $s->select(['nome','id_student'])
     ->from('student','s')
-    // ->where(['nome'=>'maria,Jeanne'],['='],['or'])
-  ->order(['nome'=>'DESC']);
+    ->where(['nome'=>'Carlos Magno','is_active'=>true],['='],['and']);
+  // ->order(['nome'=>'DESC']);
   // ->join('INNER JOIN', 'phone', ['s.id_student','p.id_student'], '!=','p');
   $result = $s->execute($pdo)->fetchAll(PDO::FETCH_ASSOC);
   echo PHP_EOL;

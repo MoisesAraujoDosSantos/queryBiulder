@@ -56,6 +56,7 @@ class Query
     public function where(array $clauses, array|string $operator, ?array $operation = null) //adicionar validação pra valor nulo se tiver mais de um operador
     {
         $where = [];
+        
         $this->resetIncrement();
         if (is_string($operator)) {
             $operator = explode(" ", $operator);
@@ -94,11 +95,12 @@ class Query
                 }
             }
         } else {
-            $tratedWhere = implode(" ", $where);
+            $tratedWhere = implode(" {$operation[0]} ", $where);
+            
         }
 
         $this->queries['where'] = " WHERE {$tratedWhere}";
-
+        
         return $this;
     }
     public function biulderPlaceholder(string $criterion, mixed $quantity, string $operator, string $clauseName)
@@ -107,7 +109,7 @@ class Query
 
         $field = trim($criterion);
         $value = is_string($quantity) ? trim($quantity) : $quantity;
-        var_dump($value);
+        
         $fieldIncrement = "{$field}_{$this->i}";
         // evitando sobrescrita caso o nome  do campo seja o mesmo
         $this->bindings[$clauseName][$fieldIncrement] = $value;
