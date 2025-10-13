@@ -52,7 +52,7 @@ class Query
     {
         $this->i = 0;
     }
-    //o where nao esta concatenando certo o array de operadores e o de condições, ta saindo op1 op2, em vez de op1 and op2
+
     public function where(array $clauses, array|string $operator, ?array $operation = null) //adicionar validação pra valor nulo se tiver mais de um operador
     {
         $where = [];
@@ -95,6 +95,7 @@ class Query
                 }
             }
         } else {
+            $operation[0] = $operation[0] ?? '';
             $tratedWhere = implode(" {$operation[0]} ", $where);
             
         }
