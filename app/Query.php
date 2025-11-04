@@ -104,14 +104,24 @@ class Query
         
         return $this;
     }
+    public function sanitizeField(string $field)
+    {
+        if (!str_contains($field, '.')) return $field;
+        // tudo que nao for letra, numero ou underline vira underline
+        $newField = preg_replace('/[^a-zA-Z0-9_]/', '_', $field);
+        return $newField;
+    }
+
     public function biulderPlaceholder(string $criterion, mixed $quantity, string $operator, string $clauseName)
     {
         $formatedQuery = [];
 
         $field = trim($criterion);
+        $newField = $this->sanitizeField($field);
         $value = is_string($quantity) ? trim($quantity) : $quantity;
-        
-        $fieldIncrement = "{$field}_{$this->i}";
+
+
+        $fieldIncrement = "{$newField}_{$this->i}";
         // evitando sobrescrita caso o nome  do campo seja o mesmo
         $this->bindings[$clauseName][$fieldIncrement] = $value;
 
@@ -189,7 +199,8 @@ class Query
         if ($stmt->rowCount() == 0 && !$is_Select) {
             throw new RuntimeException('Nenhum registro encontrado para esta condição');
         }
-
+        $this->bindReset();
+        $this->querieReset();
         return $stmt;
     }
 }
