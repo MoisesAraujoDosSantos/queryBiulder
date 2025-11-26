@@ -23,6 +23,7 @@
 <p>- select() => seleciona as colunas.</p>
 <p>- where() => opcional mas se colocado precisa de pelo menos uma condição.</p>
 <p>- order() => opcional para a ordenação das colunas.</p>
+<p>- join() => opcional para junção de tabelas</p>
 
 <h3>Classe UpdateQuery:</h3>
 <p>- update() => atualiza.</p>
@@ -65,7 +66,8 @@ $s->select(['id', 'nome'])
   ->where(['coluna'=>'valor_1,valor_2','coluna' => 'valor'],
           ['operador_de_comparação1,operador_de_comparação2'],
           ['operador_logico1,operador_logico2'])
-  ->order(['coluna'=>'DESC']);
+  ->order(['coluna'=>'DESC'])
+  ->join('tipoDeJoin', 'tabelaDeJunção', ['colunaDaTabelaDoFrom','colunaDaTabelaDeJunção'], 'condiçãoDoJoin','aliasDaTabelaDeJunção');
 $result = $s->execute($pdo)->fetchAll(PDO::FETCH_ASSOC);
 </code></pre>
 
