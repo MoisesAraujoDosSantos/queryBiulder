@@ -4,7 +4,7 @@ namespace Moises\QueryBiulder;
 
 
 class DeleteQuery extends Query{
-
+    use ReturnninTrait;
 
     public function delete($tableName,array $whereCriterion,array $operators,?array $logicalConditions = null)
     {
@@ -15,7 +15,7 @@ class DeleteQuery extends Query{
     }
     public function toSql()
     {
-        $sqlQuery = "{$this->queries['delete']} {$this->queries['from']} {$this->queries['where']}";
+        $sqlQuery = "{$this->queries['delete']} {$this->queries['from']} {$this->queries['where']} {$this->retturningString()}";
         $this->querieReset();
         return "{$sqlQuery};";
     }

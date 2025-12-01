@@ -3,6 +3,9 @@ namespace Moises\QueryBiulder;
 
 class InsertQuery extends Query
 {
+
+    use ReturnninTrait;
+
     public array $columns = [];
     public function insert(string $tableName, array $columns) {
         $this->validateIdentifier($tableName);
@@ -33,7 +36,7 @@ class InsertQuery extends Query
 
     public function toSql()
     {
-        $sqlQuery = "{$this->queries['insert']}{$this->queries['values']}";
+        $sqlQuery = "{$this->queries['insert']}{$this->queries['values']} {$this->retturningString()}";
         $this->querieReset();
         return "{$sqlQuery};";
     }
