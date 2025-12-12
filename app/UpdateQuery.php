@@ -3,7 +3,7 @@ namespace Moises\QueryBiulder;
 
 
 class UpdateQuery extends Query{
-    use ReturnninTrait;
+    use ReturningTrait;
     
     public function update($tableName)
     {
@@ -34,7 +34,7 @@ class UpdateQuery extends Query{
         if (!empty($this->queries['where'])) {
             $sqlQuery .=  " {$this->queries['where']}";
         }
-        $sqlQuery .= " {$this->retturningString()}";
+        $sqlQuery .= " {$this->returningString()}";
         $this->querieReset();
         return trim($sqlQuery) . ";";
     }

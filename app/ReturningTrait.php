@@ -2,10 +2,10 @@
 
 namespace Moises\QueryBiulder;
 
-trait ReturnninTrait
+trait ReturningTrait
 {
     public string $returning = '';
-    public function retturning($field = null)
+    public function returning($field = null)
     {
         if (is_array($field)) {
             $fieldSanitized = implode(', ', $field);
@@ -15,7 +15,7 @@ trait ReturnninTrait
             $this->returning = ' RETURNING ' . $field . ' ';
         }
     }
-    public function retturningString()
+    public function returningString()
     {
         return $this->returning;
     }

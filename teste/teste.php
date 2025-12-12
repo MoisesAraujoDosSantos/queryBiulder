@@ -18,7 +18,7 @@ try {
 // passou
 // $string = ' or 1=1; --';
 $i = new InsertQuery();
-$stmt =  $i->insert('clients', ['name','idade'])->values(['martha', 20])->retturning('id');
+$stmt =  $i->insert('clients', ['name','idade'])->values(['Maria', 30])->values(['Ana',25])->returning(['id','name']);
 
 $result = $i->execute($pdo);
 print_r($result->fetchAll(PDO::FETCH_ASSOC));
