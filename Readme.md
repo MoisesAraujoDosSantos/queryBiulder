@@ -23,7 +23,8 @@
 <p>- select() => seleciona as colunas.</p>
 <p>- where() => opcional mas se colocado precisa de pelo menos uma condição.</p>
 <p>- order() => opcional para a ordenação das colunas.</p>
-<p>- join() => opcional para junção de tabelas</p>
+<p>- join() => opcional para junção de tabelas.</p>
+<p>- limit() => opcional para adicionar limite de linhas no retorno da querie.</p>
 
 <h3>Classe UpdateQuery:</h3>
 <p>- update() => atualiza.</p>
@@ -67,7 +68,8 @@ $s->select(['id', 'nome'])
           ['operador_de_comparação1,operador_de_comparação2'],
           ['operador_logico1,operador_logico2'])
   ->order(['coluna'=>'DESC'])
-  ->join('tipoDeJoin', 'tabelaDeJunção', ['colunaDaTabelaDoFrom','colunaDaTabelaDeJunção'], 'condiçãoDoJoin','aliasDaTabelaDeJunção');
+  ->join('tipoDeJoin', 'tabelaDeJunção', ['colunaDaTabelaDoFrom','colunaDaTabelaDeJunção'], 'condiçãoDoJoin','aliasDaTabelaDeJunção')
+  ->limit(1);
 $result = $s->execute($pdo)->fetchAll(PDO::FETCH_ASSOC);
 </code></pre>
 
