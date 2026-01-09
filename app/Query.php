@@ -66,20 +66,25 @@ class Query
                 $clauses[$key] = explode(",", $value);
             }
         }
+        
+        $clauseIndex = 0;
+        
         foreach ($clauses as $col => $values) {
             $values = is_array($values) ? $values : [$values];
 
             foreach ($values as $key => $val) {
                 if (is_array($operator)) {
-                    foreach ($operator as $op) {
-                        $where = array_merge(
-                            $where,
-                            $this->biulderPlaceholder($col, $val, $op, 'where')
-                        );
-                    }
+                    $op = $operator[$clauseIndex] ?? $operator[0];
+                    
+                    $where = array_merge(
+                        $where,
+                        $this->biulderPlaceholder($col, $val, $op, 'where')
+                    );
                 }
                 $this->i++;
             }
+            
+            $clauseIndex++;
         }
 
         $tratedWhere = '';
