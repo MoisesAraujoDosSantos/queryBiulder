@@ -41,7 +41,7 @@ class SelectQuery extends Query
 
     private function validateIdentifierGeneric(string $name)
     {
-        if (!preg_match('/^[A-Za-z0-9_.]+$/', $name)) {
+        if (!preg_match('/^(?!.--)[A-Za-z0-9-_.]+$/', $name)) {
             throw new Exception("Identificador inválido: {$name}");
         }
         return $name;
